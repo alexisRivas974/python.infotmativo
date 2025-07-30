@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head> 
+  
+  <a href="historia_python.html" style="position: absolute; top: 20px; left: 20px; text-decoration: none;">
+  <button style="font-size: 18px; padding: 10px 20px; cursor: pointer;">
+    ⬅ Volver
+  </button>
+</a>
+
+
+  <meta charset="UTF-8">
+  <title>Trivia sobre Python</title>
+  <style>
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #306998, #ffd343);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+
+    header img {
+      width: 80px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 10px 0 20px;
+      color: #fff;
+      text-shadow: 1px 1px 3px #000;
+    }
+
+    h3 {
+      margin: 10px 0 20px;
+      color: #fff;
+    }
+
+    #cronometro {
+      font-weight: bold;
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: #ffd343;
+      color: #1b1b1b;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background-color: #ffcb1a;
+    }
+
+    .opciones {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .opcion {
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 15px;
+      width: 220px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .opcion:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+      transform: scale(1.03);
+    }
+
+    .resultado {
+      font-size: 20px;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="https://www.python.org/static/community_logos/python-logo.png" alt="Logo Python">
+    <h1>Trivia sobre Python</h1>
+  </header>
+
+  <h3 id="estado">Presiona el botón para comenzar</h3>
+  <div id="cronometro" style="display:none">0s</div>
+  <button id="comenzarBtn">Comenzar</button>
+  <div id="contenedor"></div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const contenedor = document.getElementById("contenedor");
+      const estado = document.getElementById("estado");
+      const cronometro = document.getElementById("cronometro");
+      const comenzarBtn = document.getElementById("comenzarBtn");
+
+      let segundos = 0;
+      let intervalo = null;
+      let puntos = 0;
+      let actual = 0;
+
+      const preguntas = [
+        {
+          pregunta: "¿Quién creó el lenguaje Python?",
+          opciones: [
+            { texto: "Guido van Rossum", correcta: true },
+            { texto: "Dennis Ritchie", correcta: false },
+            { texto: "James Gosling", correcta: false },
+            { texto: "Bjarne Stroustrup", correcta: false }
+          ]
+        },
+        {
+          pregunta: "¿Cuál de estas es una característica de Python?",
+          opciones: [
+            { texto: "Sintaxis clara y legible", correcta: true },
+            { texto: "Solo funciona en Windows", correcta: false },
+            { texto: "Compilado exclusivamente", correcta: false },
+            { texto: "Lenguaje sin comunidad activa", correcta: false }
+          ]
+        },
+        {
+          pregunta: "¿Qué empresa usa Python para su sistema de recomendaciones?",
+          opciones: [
+            { texto: "Netflix", correcta: true },
+            { texto: "Amazon", correcta: false },
+            { texto: "Apple", correcta: false },
+            { texto: "Intel", correcta: false }
+          ]
+        },
+        {
+          pregunta: "¿Cuál es un uso común de Python?",
+          opciones: [
+            { texto: "Ciencia de datos", correcta: true },
+            { texto: "Diseño gráfico 3D", correcta: false },
+            { texto: "Animación 2D tradicional", correcta: false },
+            { texto: "Compilación de hardware", correcta: false }
+          ]
+        },
+        {
+          pregunta: "¿Cuál de estas librerías es usada para Machine Learning?",
+          opciones: [
+            { texto: "TensorFlow", correcta: true },
+            { texto: "Bootstrap", correcta: false },
+            { texto: "jQuery", correcta: false },
+            { texto: "Laravel", correcta: false }
+          ]
+        },
+        {
+          pregunta: "¿Cuál fue una versión importante no retrocompatible de Python?",
+          opciones: [
+            { texto: "Python 3.0", correcta: true },
+            { texto: "Python 2.7", correcta: false },
+            { texto: "Python 1.0", correcta: false },
+            { texto: "Python 3.9", correcta: false }
+          ]
+        },
+        {
+          pregunta: "¿Qué significa que Python sea multiplataforma?",
+          opciones: [
+            { texto: "Funciona en Windows, macOS, Linux, etc.", correcta: true },
+            { texto: "Solo funciona en un navegador", correcta: false },
+            { texto: "Funciona sin conexión a internet", correcta: false },
+            { texto: "Solo se ejecuta en línea", correcta: false }
+          ]
+        }
+      ];
+
+      comenzarBtn.onclick = () => {
+        comenzarBtn.style.display = "none";
+        cronometro.style.display = "block";
+        intervalo = setInterval(() => {
+          segundos++;
+          cronometro.textContent = `${segundos}s`;
+        }, 1000);
+        mostrarPregunta();
+      };
+
+      function mostrarPregunta() {
+        contenedor.innerHTML = "";
+        estado.textContent = `Puntos: ${puntos} | Pregunta ${actual + 1} de ${preguntas.length}`;
+
+        const p = preguntas[actual];
+        const h2 = document.createElement('h2');
+        h2.textContent = p.pregunta;
+        contenedor.appendChild(h2);
+
+        const opcionesDiv = document.createElement('div');
+        opcionesDiv.className = "opciones";
+        contenedor.appendChild(opcionesDiv);
+
+        const opciones = [...p.opciones].sort(() => Math.random() - 0.5);
+        opciones.forEach(op => {
+          const div = document.createElement('div');
+          div.className = "opcion";
+          div.textContent = op.texto;
+
+          div.onclick = () => {
+            const resultado = document.createElement('p');
+            resultado.textContent = op.correcta ? "¡Correcto!" : "Incorrecto.";
+            resultado.style.color = op.correcta ? "lightgreen" : "#ff5a5a";
+            resultado.className = "resultado";
+            contenedor.appendChild(resultado);
+
+            if (op.correcta) puntos++;
+            actual++;
+
+            setTimeout(() => {
+              if (actual < preguntas.length) {
+                mostrarPregunta();
+              } else {
+                mostrarResultado();
+              }
+            }, 1000);
+          };
+          opcionesDiv.appendChild(div);
+        });
+      }
+
+      function mostrarResultado() {
+        clearInterval(intervalo);
+        contenedor.innerHTML = `
+          <h2>Juego terminado</h2>
+          <p>Tu puntaje final es: <strong>${puntos} / ${preguntas.length}</strong></p>
+        `;
+        estado.textContent = "Juego completado en " + segundos + " segundos";
+
+        const btn = document.createElement("button");
+        btn.textContent = "Jugar de nuevo";
+        btn.onclick = () => {
+          puntos = 0;
+          actual = 0;
+          segundos = 0;
+          cronometro.textContent = "0s";
+          comenzarBtn.style.display = "inline-block";
+          estado.textContent = "Presiona el botón para comenzar";
+          contenedor.innerHTML = "";
+          cronometro.style.display = "none";
+        };
+        contenedor.appendChild(btn);
+      }
+    });
+  </script>
+</body>
+</html>
